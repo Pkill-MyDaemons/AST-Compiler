@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# macOS
+.DS_Store
+
+# Models (large binary weights — track separately via Git LFS or HuggingFace)
+models/
+
+# Training data (large JSONL datasets)
+data/
+
+# Generated outputs
+out.json
+
+# Editor / OS
+.idea/
+.vscode/
+*.swp
+*~

@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ast-compiler"
+version = "0.1.0"
+description = "Language-agnostic AST compiler/decompiler with AI harness"
+requires-python = ">=3.10"
+dependencies = [
+    "click>=8",
+    "tree-sitter>=0.24",
+    "tree-sitter-rust>=0.23",
+    "tree-sitter-typescript>=0.23",
+]
+
+[project.scripts]
+ast-compiler  = "src.cli:compiler_cli"
+ast-harness   = "src.cli:harness_cli"
+ast-gen-data  = "training.generate:main"
+ast-train     = "training.train:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
