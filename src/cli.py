@@ -33,7 +33,13 @@ def compiler_cli() -> None:
 @click.option("-o", "--output", default=None, help="Output JSON file (default: stdout)")
 @click.option("--lang", default=None, help="Override language detection (python|rust)")
 @click.option("--pretty/--no-pretty", default=True, help="Pretty-print JSON")
-def cmd_decompile(input_file: str, output: str, lang: str, pretty: bool) -> None:
+@click.option(
+    "--format", "fmt",
+    default="verbose",
+    type=click.Choice(["verbose", "min-json", "sexpr"]),
+    help="Output format: verbose (default), min-json, or sexpr",
+)
+def cmd_decompile(input_file: str, output: str, lang: str, pretty: bool, fmt: str) -> None:
     """Parse source code into unified AST JSON."""
     path = Path(input_file)
     source = path.read_text(encoding="utf-8")
@@ -46,8 +52,17 @@ def cmd_decompile(input_file: str, output: str, lang: str, pretty: bool) -> None
         click.echo(f"Error: {e}", err=True)
         sys.exit(1)
 
-    indent = 2 if pretty else None
-    result = json.dumps(module.to_dict(), indent=indent, ensure_ascii=False)
+    ast_dict = module.to_dict()
+
+    if fmt == "min-json":
+        from .unified_ast.minify import minify
+        result = minify(ast_dict)
+    elif fmt == "sexpr":
+        from .unified_ast.sexpr import sexpr
+        result = sexpr(ast_dict)
+    else:
+        indent = 2 if pretty else None
+        result = json.dumps(ast_dict, indent=indent, ensure_ascii=False)
 
     if output:
         Path(output).write_text(result + "\n", encoding="utf-8")
